@@ -9,8 +9,8 @@
 #include "Sync.h"
 
 //Constants
-#define ssid "Wireless Network 2.4 GHz"
-#define pass ".lozer12"
+#define ssid "Your SSID Here"
+#define pass "T0PS{cRE7!"
 #define aioKey "041da268241949669fd13faa7c832296"
 
 #define BUFFER_SIZE 50
@@ -27,15 +27,16 @@ const char sendDataCommand[] PROGMEM = "AT+CIPSENDEX=2048";
 
 
 // Variables
-#define USE_SOFTWARE_SERIAL 1
+#define USE_SOFTWARE_SERIAL 0
 
 #if USE_SOFTWARE_SERIAL
-SoftwareSerial esp8266(9,10);
+SoftwareSerial esp8266(10,11);
 #define BAUD_RATE 9600
 #else
 #define esp8266 Serial
 #define BAUD_RATE 115200
 #endif
+
 
 LiquidCrystal_I2C lcd(0x27,16,2);
 Adafruit_BMP280 bmp; // I2C
@@ -82,6 +83,7 @@ void setup() {
   lcd.setCursor(0,1);
   lcd.print(F("Assignment 1"));
 
+  while(!esp8266){}
 //  interruptSetup();
   
   bmp.begin();
@@ -94,10 +96,12 @@ void setup() {
   Serial.begin(BAUD_RATE);
   setupSoftwareSerial();
   #else
-  //interruptSetup();
-  #endif
-  
   esp8266.begin(BAUD_RATE);
+  sendCommand(atCommand);
+  while(!readline().equals("OK")) {}
+  #endif
+//  interruptSetup();
+  
   delay(1000);
   lcd.clear();
   lcd.setCursor(0,0);
@@ -279,7 +283,9 @@ String readline(char until) {
   while(1) {
     int in = esp8266.read();
     if (in >= 0) {
+      #if USE_SOFTWARE_SERIAL
       Serial.write(in);
+      #endif
       if (in == until) {
         buff[n] = in;
         buff[n+1] = 0;
@@ -478,51 +484,6 @@ String getResultIfAvailable() {
   return "";
 }
 
-String waitForResult() {
-  // Wait for data
-  int _startMillis = millis();
-  while(esp8266.available() == 0 && millis() - _startMillis < 60000);
-  return getResultIfAvailable();
-}
-
-bool setupSoftwareSerial() {
-  unsigned long current = 0;
-  for (int i = 0; i < 2; i++) {
-    for (int attempt = 0; attempt < 5; attempt++) {
-      unsigned long baud = i ? 115200 : 9600;
-      esp8266.begin(baud);
-      sendCommand(atCommand);
-      delay(1000);
-      if (getResultIfAvailable().indexOf("OK") != -1) {
-          current = baud;
-          break;
-      }
-    }
-    if (current) { break; }
-  }
-
-  Serial.print(F("Current baud is "));
-  Serial.println(current);
-  esp8266.setTimeout(5000);
-  if (current == 0) {
-    return false;
-  }
-  if (current == BAUD_RATE) {
-    return true;
-  }
-  for (int attempt = 0; attempt < 5; attempt++) {
-    sendCommand(baudCommand);
-//    delay(50);
-    String result = getResultIfAvailable();
-    if (result.indexOf("OK") != -1 || result.indexOf("AT") != -1) {
-      esp8266.begin(BAUD_RATE);
-//      delay(100);
-      return true;
-    }
-  }
-  return false;
-}
-
 void interruptSetup(){     
   TCCR2A = 0x02;     // DISABLE PWM ON DIGITAL PINS 3 AND 11, AND GO INTO CTC MODE
   TCCR2B = 0x06;     // DON'T FORCE COMPARE, 256 PRESCALER 
@@ -619,3 +580,52 @@ ISR(TIMER2_COMPA_vect){                       // triggered when Timer2 counts to
   sei();     
   // enable interrupts when youre done!
 }// end isr
+
+
+
+#if USE_SOFTWARE_SERIAL
+String waitForResult() {
+  // Wait for data
+  int _startMillis = millis();
+  while(esp8266.available() == 0 && millis() - _startMillis < 60000);
+  return getResultIfAvailable();
+}
+
+bool setupSoftwareSerial() {
+  unsigned long current = 0;
+  for (int i = 0; i < 2; i++) {
+    for (int attempt = 0; attempt < 5; attempt++) {
+      unsigned long baud = i ? 115200 : 9600;
+      esp8266.begin(baud);
+      sendCommand(atCommand);
+      delay(1000);
+      if (getResultIfAvailable().indexOf("OK") != -1) {
+          current = baud;
+          break;
+      }
+    }
+    if (current) { break; }
+  }
+
+  Serial.print(F("Current baud is "));
+  Serial.println(current);
+  esp8266.setTimeout(5000);
+  if (current == 0) {
+    return false;
+  }
+  if (current == BAUD_RATE) {
+    return true;
+  }
+  for (int attempt = 0; attempt < 5; attempt++) {
+    sendCommand(baudCommand);
+//    delay(50);
+    String result = getResultIfAvailable();
+    if (result.indexOf("OK") != -1 || result.indexOf("AT") != -1) {
+      esp8266.begin(BAUD_RATE);
+//      delay(100);
+      return true;
+    }
+  }
+  return false;
+}
+#endif
