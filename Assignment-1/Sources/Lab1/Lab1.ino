@@ -43,6 +43,7 @@ DHT dht(7, DHT22); //// Initialize DHT sensor for normal 16mhz Arduino
 
 Sync updateSync;
 Sync displaySync;
+Sync ledSync;
 
 bool isConnected = false;
 bool isJoined = false;
@@ -69,6 +70,8 @@ Sync uvSync;
 
 volatile boolean isPulseAvailable = false;     // "True" when heartbeat is detected. "False" when not a "live beat". 
 
+int redLED = LOW;
+int greenLED = LOW;
 
 void setup() {
   lcd.init();
@@ -84,6 +87,8 @@ void setup() {
   bmp.begin();
   pinMode(A1, INPUT); // Light
   pinMode(8, INPUT); // Dust
+  pinMode(2, OUTPUT); // Green LED
+  pinMode(3, OUTPUT); // Red LED
 
   #if USE_SOFTWARE_SERIAL
   Serial.begin(BAUD_RATE);
@@ -138,7 +143,9 @@ void loop() {
     return;
   }
 
-  if (digitalRead(A3)==HIGH){
+  if (digitalRead(A3)==HIGH) {
+    digitalWrite(2, LOW);
+    digitalWrite(3, LOW);
     lcd.clear();
     isRunning = !isRunning;
     lcd.setCursor(0,0);
@@ -151,6 +158,18 @@ void loop() {
     return;
   }
 
+  if (ledSync.elapsed(500)) {
+    if (allGood()) {
+      greenLED = greenLED == HIGH ? LOW : HIGH;
+      redLED = LOW;
+    } else {
+      redLED = redLED == HIGH ? LOW : HIGH;
+      greenLED = LOW;
+    }
+    digitalWrite(2, greenLED);
+    digitalWrite(3, redLED);    
+  }
+
   if (updateSync.elapsed(10000)) {
     updateData(); 
   }
@@ -158,6 +177,10 @@ void loop() {
   if (displaySync.elapsed(1000)) {
     updateLCD();
   }
+}
+
+bool allGood() {
+  return light >= 60;
 }
 
 int updateIndex = 0;
