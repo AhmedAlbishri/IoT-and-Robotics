@@ -1,0 +1,403 @@
+[
+    {
+        "id": "bb2177d2.430868",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "dfe1d536.29bc38",
+        "type": "sensorTag",
+        "z": "bb2177d2.430868",
+        "name": "sensorTag",
+        "devices": [
+            "bc6a29ab629d"
+        ],
+        "temperature": true,
+        "humidity": true,
+        "pressure": true,
+        "magnetometer": true,
+        "magnetometerPeriod": "1000",
+        "accelerometer": true,
+        "accelerometerPeriod": "1000",
+        "gyroscope": true,
+        "gyroscopePeriod": "1000",
+        "luxometer": true,
+        "luxometerPeriod": "1000",
+        "keys": true,
+        "x": 380,
+        "y": 460,
+        "wires": [
+            [
+                "3c13a827.2ac9e8"
+            ]
+        ]
+    },
+    {
+        "id": "cb759c0d.d0ee4",
+        "type": "debug",
+        "z": "bb2177d2.430868",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 750,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "3c13a827.2ac9e8",
+        "type": "function",
+        "z": "bb2177d2.430868",
+        "name": "extractData",
+        "func": "return msg.payload.json_data;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 460,
+        "wires": [
+            [
+                "cb759c0d.d0ee4",
+                "38eaccf3.358584",
+                "fef50a72.91e5f8",
+                "b866d621.d2f328",
+                "62c010cb.949ea",
+                "fcd4b875.da66d8"
+            ]
+        ]
+    },
+    {
+        "id": "38eaccf3.358584",
+        "type": "function",
+        "z": "bb2177d2.430868",
+        "name": "ProjectTemperature",
+        "func": "msg.payload=msg.temperature;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1130,
+        "y": 240,
+        "wires": [
+            [
+                "496648ec.3bc4b8"
+            ]
+        ]
+    },
+    {
+        "id": "fef50a72.91e5f8",
+        "type": "function",
+        "z": "bb2177d2.430868",
+        "name": "ProjectPressure",
+        "func": "msg.payload= msg.pressure;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1140,
+        "y": 340,
+        "wires": [
+            [
+                "b59acb38.ee1538"
+            ]
+        ]
+    },
+    {
+        "id": "b866d621.d2f328",
+        "type": "function",
+        "z": "bb2177d2.430868",
+        "name": "ProjectHumidty",
+        "func": "msg.payload=msg.pressure;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1140,
+        "y": 480,
+        "wires": [
+            [
+                "a0541196.4e5ae"
+            ]
+        ]
+    },
+    {
+        "id": "62c010cb.949ea",
+        "type": "function",
+        "z": "bb2177d2.430868",
+        "name": "ProjectAmbience",
+        "func": "msg.payload=msg.ambient;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1140,
+        "y": 600,
+        "wires": [
+            [
+                "10368030.72ab7"
+            ]
+        ]
+    },
+    {
+        "id": "10368030.72ab7",
+        "type": "ui_gauge",
+        "z": "bb2177d2.430868",
+        "name": "Ambient Gauge",
+        "group": "a5c6a377.062da",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Ambient Gauge",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 1380,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "a0541196.4e5ae",
+        "type": "ui_gauge",
+        "z": "bb2177d2.430868",
+        "name": "Humidty Gauge",
+        "group": "7de0fcef.120ae4",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidty Gauge",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "2000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 1380,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "b59acb38.ee1538",
+        "type": "ui_chart",
+        "z": "bb2177d2.430868",
+        "name": "",
+        "group": "c4f18469.6b3c58",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "label": "Pressure Chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Pressure Chart",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1380,
+        "y": 340,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "496648ec.3bc4b8",
+        "type": "ui_chart",
+        "z": "bb2177d2.430868",
+        "name": "Temperature Chart",
+        "group": "5407135d.f7e2ac",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "Temperature Chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "0",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 1390,
+        "y": 240,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "771c89b0.5192f8",
+        "type": "function",
+        "z": "bb2177d2.430868",
+        "name": "Email",
+        "func": "var temp;\n\nif(msg.temperature !== undefined){\ntemp = msg.temperature;\nmsg.payload = \"Hello, Sensortag reading for (Temperature is \"+String(temp)+\") .\";\n//return msg;   \n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1130,
+        "y": 680,
+        "wires": [
+            [
+                "adcfa383.5d6ea"
+            ]
+        ]
+    },
+    {
+        "id": "f068107d.73549",
+        "type": "function",
+        "z": "bb2177d2.430868",
+        "name": "Tweet",
+        "func": "var pres;\nif (msg.pressure !== undefined){\npres = msg.pressure;\nmsg.payload = \"Hello, Sensortag reading for (Pressure is \"+String(pres)+\").\";\n//return msg;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1130,
+        "y": 780,
+        "wires": [
+            [
+                "e75b8a4c.35dfb8"
+            ]
+        ]
+    },
+    {
+        "id": "adcfa383.5d6ea",
+        "type": "e-mail",
+        "z": "bb2177d2.430868",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "name": "123",
+        "dname": "123",
+        "x": 1350,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "e75b8a4c.35dfb8",
+        "type": "twitter out",
+        "z": "bb2177d2.430868",
+        "twitter": "",
+        "name": "Tweet",
+        "x": 1350,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "fcd4b875.da66d8",
+        "type": "delay",
+        "z": "bb2177d2.430868",
+        "name": "Send After 30 Second",
+        "pauseType": "timed",
+        "timeout": "15",
+        "timeoutUnits": "hours",
+        "rate": "1",
+        "nbRateUnits": "30",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 820,
+        "y": 720,
+        "wires": [
+            [
+                "771c89b0.5192f8",
+                "f068107d.73549"
+            ]
+        ]
+    },
+    {
+        "id": "a5c6a377.062da",
+        "type": "ui_group",
+        "z": "",
+        "name": "Ambient",
+        "tab": "d7883887.9ac758",
+        "order": 4,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "7de0fcef.120ae4",
+        "type": "ui_group",
+        "z": "",
+        "name": "Humadity",
+        "tab": "d7883887.9ac758",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "c4f18469.6b3c58",
+        "type": "ui_group",
+        "z": "",
+        "name": "Pressure",
+        "tab": "d7883887.9ac758",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "5407135d.f7e2ac",
+        "type": "ui_group",
+        "z": "",
+        "name": "Temp",
+        "tab": "d7883887.9ac758",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "d7883887.9ac758",
+        "type": "ui_tab",
+        "z": "",
+        "name": "sensortag",
+        "icon": "dashboard",
+        "order": 2
+    }
+]
